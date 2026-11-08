@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>যাত্রীর পরিচয় · কাফেলা যাত্রা</title>
+<meta name="theme-color" content="#0A0A0A">
+<meta name="robots" content="noindex">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="vendor/fonts/fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;600;700;800&display=swap" media="print" onload="this.media='all'">
+<style>
+:root{--green:#0f6b3e;--deep:#050505;--gold:#c9a24a;--gold2:#f3d98b;--ink:#14241e;--muted:#5b6863;--line:#d5dcd8;--bg:#eef3f0;--card:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#e7ece9;--muted:#a3b0aa;--line:#2a3531;--bg:#0f1513;--card:#18201d}}
+:root[data-theme="dark"]{--ink:#e7ece9;--muted:#a3b0aa;--line:#2a3531;--bg:#0f1513;--card:#18201d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Anek Bangla",system-ui,sans-serif;font-size:17px;line-height:1.5}
+header{background:repeating-linear-gradient(45deg,rgba(255,255,255,.03) 0 6px,transparent 6px 24px),linear-gradient(180deg,#161616,#050505);border-bottom:4px solid #c9a24a;color:#fff;padding:18px 16px 70px;text-align:center}
+header .row{display:flex;align-items:center;justify-content:center;gap:10px}
+header img{width:44px;height:44px;border-radius:12px;box-shadow:0 0 0 1px rgba(243,217,139,.6)}
+header h1{margin:0;font-size:24px;color:var(--gold2)}
+header p{margin:6px 0 0;color:#e8e2d0;font-size:15px}
+main{max-width:560px;margin:-56px auto 30px;padding:0 16px}
+.card{background:var(--card);border-radius:22px;box-shadow:0 10px 36px rgba(0,0,0,.14);overflow:hidden;border:1px solid var(--line)}
+.top{display:flex;flex-direction:column;align-items:center;padding:22px 18px 8px;text-align:center}
+.ph{width:150px;height:180px;border-radius:18px;object-fit:cover;border:4px solid var(--gold);background:#d4e8df;display:grid;place-items:center;font-size:64px;font-weight:800;color:var(--green)}
+.name{font-size:28px;font-weight:800;margin:12px 0 2px}
+.kaf{color:var(--muted)}
+.help{margin:14px 16px 4px;padding:12px 14px;border-radius:14px;background:#fdf3d8;color:#3b2c06;font-weight:600}
+.help .ar{direction:rtl;text-align:right;font-family:"Amiri","Noto Naskh Arabic",serif;font-size:19px;margin-top:6px}
+.help .en{font-size:15px;margin-top:4px;font-weight:500}
+.btns{display:grid;gap:10px;padding:14px 16px}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;min-height:56px;border-radius:16px;font-weight:800;font-size:18px;text-decoration:none;color:#f3d98b;background:#141414}
+.btn.gold{background:linear-gradient(135deg,#c9a24a,#e7c873);color:#1c1606}
+.btn.wa{background:#1fa463}
+.btn svg{width:24px;height:24px}
+dl{margin:0;padding:6px 18px 18px;display:grid;grid-template-columns:40% 1fr;gap:10px 14px}
+dt{color:var(--muted);font-size:15px}
+dd{margin:0;font-weight:700;word-break:break-word}
+.foot{text-align:center;color:var(--muted);font-size:14px;margin-top:18px}
+.msg{padding:40px 20px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="row"><img src="icon-192.png" alt=""><h1>কাফেলা যাত্রা</h1></div>
+  <p>যাত্রীর পরিচয় · Pilgrim ID · بطاقة الحاج</p>
+</header>
+<main><div class="card" id="out"><p class="msg">তথ্য আনা হচ্ছে… · Loading…</p></div>
+<p class="foot">এই সেবাটি যিনি তৈরি করেছেন, তাঁর জন্য দোয়া করবেন।</p></main>
+<script src="firebase-config.js"></script>
+<script>
+(function () {
+  "use strict";
+  var out = document.getElementById("out");
+  var E = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
+  var token = (location.hash || "").slice(1).replace(/[^a-z0-9]/gi, "");
+  var cfg = window.HG_CLOUD || {};
+  if (!token || !cfg.databaseURL || /PASTE_/.test(cfg.databaseURL)) { out.innerHTML = '<p class="msg">এই কার্ডের তথ্য পাওয়া যায়নি।<br>Card not found.</p>'; return; }
+  var digits = function (p) { return String(p || "").replace(/[০-৯]/g, function (d) { return "০১২৩৪৫৬৭৮৯".indexOf(d); }).replace(/[^\d+]/g, ""); };
+  var callIco = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>';
+  fetch(cfg.databaseURL.replace(/\/+$/, "") + "/pub/" + token + ".json", { cache: "no-store" })
+    .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function (d) {
+      if (!d) { out.innerHTML = '<p class="msg">এই কার্ডটি আর চালু নেই।<br>This card is no longer active.</p>'; return; }
+      document.title = (d.name || "যাত্রী") + " · কাফেলা যাত্রা";
+      var mp = digits(d.muallimPhone), pp = digits(d.phone);
+      var rows = [["পাসপোর্ট · Passport", d.passport], ["মোবাইল · Mobile", d.phone], ["কাফেলা · Group", d.kafela], ["হোটেল · Hotel", (d.hotel || "") + (d.room ? " · রুম " + d.room : "")], ["বাংলাদেশের ঠিকানা · Address", d.bd], ["মুআল্লিম · Guide", (d.muallim || "") + (d.muallimPhone ? " · " + d.muallimPhone : "")]]
+        .filter(function (r) { return r[1] && String(r[1]).trim(); });
+      out.innerHTML =
+        '<div class="top">' + (d.photo ? '<img class="ph" src="' + E(d.photo) + '" alt="">' : '<div class="ph">' + E((d.name || "?").slice(0, 1)) + '</div>') +
+        '<div class="name">' + E(d.name) + '</div><div class="kaf">' + E(d.kafela || "") + '</div></div>' +
+        '<div class="help">এই যাত্রী পথ হারিয়ে থাকলে অনুগ্রহ করে তাঁর মুআল্লিমকে ফোন করুন।' +
+        '<div class="ar">إذا كان هذا الحاج تائهاً، يرجى الاتصال بالمرشد على الرقم أدناه.</div>' +
+        '<div class="en">If this pilgrim is lost, please call the group guide below.</div></div>' +
+        '<div class="btns">' +
+        (mp ? '<a class="btn gold" href="tel:' + E(mp) + '">' + callIco + 'মুআল্লিমকে ফোন · Call guide</a>' : "") +
+        (mp ? '<a class="btn wa" href="https://wa.me/' + E(mp.replace(/^\+/, "")) + '">WhatsApp</a>' : "") +
+        (pp ? '<a class="btn" href="tel:' + E(pp) + '">' + callIco + 'যাত্রীকে ফোন · Call pilgrim</a>' : "") +
+        '</div><dl>' + rows.map(function (r) { return "<dt>" + E(r[0]) + "</dt><dd>" + E(r[1]) + "</dd>"; }).join("") + "</dl>";
+    })
+    .catch(function () { out.innerHTML = '<p class="msg">তথ্য আনা যায়নি। ইন্টারনেট চালু করে আবার চেষ্টা করুন।<br>Could not load. Please check the internet.</p>'; });
+})();
+</script>
+</body>
+</html>
